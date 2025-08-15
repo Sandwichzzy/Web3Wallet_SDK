@@ -86,7 +86,7 @@ const connectCoinbaseWallet = async () => {
 export const coinbaseWallet: Wallet = {
   id: "coinbase",
   name: "Coinbase Wallet",
-  icon: "https://assets.coinbase.com/assets/coinbase-wallet-icon-16x16.png",
+  icon: "https://gist.githubusercontent.com/taycaldwell/2291907115c0bb5589bc346661435007/raw/280eafdc84cb80ed0c60e36b4d0c563f6dca6b3e/cbw.svg",
   connector: connectCoinbaseWallet,
   description:
     "Coinbase Wallet is a secure and easy-to-use wallet for managing your digital assets.",

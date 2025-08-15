@@ -70,7 +70,7 @@ const connectorMetamask = async (): Promise<any> => {
 export const metamaskWallet: Wallet = {
   id: "metamask",
   name: "MetaMask",
-  icon: "https://assets.coingecko.com/coins/images/13864/large/MetaMask_2019.png?1696501629",
+  icon: "https://images.ctfassets.net/clixtyxoaeas/4rnpEzy1ATWRKVBOLxZ1Fm/a74dc1eed36d23d7ea6030383a4d5163/MetaMask-icon-fox.svg",
   connector: connectorMetamask,
   description: "MetaMask wallet",
   installed: isMetaMaskInstalled(),
