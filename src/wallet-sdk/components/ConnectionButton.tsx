@@ -41,9 +41,17 @@ const ConnectionButton = ({
 
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
   const [isSwitchingNetwork, setIsSwitchingNetwork] = useState(false);
+  const [currentChain, setCurrentChain] = useState<any>(null);
 
-  // 获取当前网络信息
-  const currentChain = chains.find((chain) => chain.id === chainId);
+  // 更新当前网络信息
+  useEffect(() => {
+    if (chainId) {
+      const chain = chains.find((chain) => chain.id === chainId);
+      setCurrentChain(chain);
+    } else {
+      setCurrentChain(null);
+    }
+  }, [chainId, chains]);
 
   // 格式化地址显示
   const formatAddress = (addr: string) => {
@@ -99,11 +107,18 @@ const ConnectionButton = ({
       });
 
       setIsSwitchingNetwork(true);
+      setShowNetworkDropdown(false); // 立即关闭下拉菜单
+
       await switchChain(targetChainId.toString());
+
+      // 网络切换成功后，等待一下让状态更新
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       if (onChainChange) {
         onChainChange(targetChainId);
       }
-      setShowNetworkDropdown(false);
+
+      console.log("网络切换完成:", targetChainId);
     } catch (error) {
       console.error("网络切换失败:", error);
       alert(
@@ -207,7 +222,9 @@ const ConnectionButton = ({
               className={`w-3 h-3 rounded-full ${getNetworkColor(chainId)}`}
             ></div>
             <span className="text-sm font-medium text-gray-700">
-              {currentChain
+              {isSwitchingNetwork
+                ? "切换中..."
+                : currentChain
                 ? currentChain.name
                 : `Chain ID: ${chainId || "Unknown"}`}
             </span>
