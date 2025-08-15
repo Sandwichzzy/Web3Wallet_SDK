@@ -1,12 +1,6 @@
 import type { Wallet } from "../types";
 import { ethers } from "ethers";
-
-function isCoinbaseWalletInstalled() {
-  return (
-    typeof window !== "undefined" &&
-    typeof (window as any).coinbaseWalletExtension !== "undefined"
-  );
-}
+import { isCoinbaseWalletInstalled } from "../utils/walletDetection";
 
 const connectCoinbaseWallet = async () => {
   try {
@@ -84,6 +78,7 @@ export const coinbaseWallet: Wallet = {
   description:
     "Coinbase Wallet is a secure and easy-to-use wallet for managing your digital assets.",
   installed: isCoinbaseWalletInstalled(),
+  downloadLink: "https://wallet.coinbase.com/",
 };
 
 export default coinbaseWallet;

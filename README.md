@@ -1,69 +1,17 @@
-# React + TypeScript + Vite
+React Web3 DIY 钱包连接组件开发任务（自定义 Web3 钱包账户 SDK）
+描述：使用 wagmi + ethers +viem 编写一个钱包连接组件, 风格类似 Rainbowkit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. React Context 的使用 ：全局状态管理（ 用户地址/链 ID/余额全局存储...）,封装可复用的 Context 组件
+2. 支持 MetaMask/Coinbase/钱包 APP 接入, 实现多钱包类型兼容
+3. 使用 EIP-1193 标准实现 ：与以太坊提供者交互
+4. 网络切换逻辑 ：通过 wallet_addEthereumChain 方法,实现多网络配置切换功能。
+5. 钱包检测机制 ：自动检查 MetaMask/Coinbase 等安装状态，前端界面显示钱包是否安装，未安装点击跳转安装界面
+6. 响应式更新 ：监听账户和链 ID 变化
 
-Currently, two official plugins are available:
+最终构建： 构建 UMDJS 库，可以在主流前端浏览器环境运行，依赖于 react 框架（ 对 SDK 体积做一定优化 ）
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+前端界面
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. 连接钱包按钮
+2. WalletModal：显示连接钱包弹窗，点击对应钱包进行连接
+3. 连接成功后，显示选择的网络，账户地址，余额（监听账户和链 ID 变化）

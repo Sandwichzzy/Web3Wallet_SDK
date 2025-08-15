@@ -1,8 +1,12 @@
 import { ethers } from "ethers";
 import type { Wallet } from "../types";
+import { isMetaMaskInstalled } from "../utils/walletDetection";
 
 const connectorMetamask = async (): Promise<any> => {
-  //TODO:判断是否安装了MetaMask
+  // 检查是否安装了MetaMask
+  if (!isMetaMaskInstalled()) {
+    throw new Error("MetaMask not installed");
+  }
 
   try {
     const accounts = await window.ethereum.request({
@@ -57,7 +61,7 @@ export const metamaskWallet: Wallet = {
   icon: "https://assets.coingecko.com/coins/images/13864/large/MetaMask_2019.png?1696501629",
   connector: connectorMetamask,
   description: "MetaMask wallet",
-  installed: true,
+  installed: isMetaMaskInstalled(),
   downloadLink: "https://metamask.io/download/",
 };
 

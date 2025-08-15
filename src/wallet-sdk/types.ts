@@ -24,6 +24,7 @@ export interface WalletState {
   error: Error | null;
   chains: Chain[];
   provider: any;
+  balance: string;
 }
 
 //钱包上下文值
@@ -33,6 +34,7 @@ export interface WalletContextValue extends WalletState {
   switchChain: (chainId: string) => Promise<void>;
   openModal: () => void;
   closeModal: () => void;
+  getBalance: () => Promise<string>;
 }
 
 //钱包配置
