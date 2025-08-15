@@ -9,16 +9,19 @@ const connectCoinbaseWallet = async () => {
     }
     //创建一个coinbase的provider
     const coinbaseProvider = (window as any).coinbaseWalletExtension;
-    const provider = new ethers.BrowserProvider(coinbaseProvider);
+
+    // 创建ethers provider用于余额等操作
+    const ethersProvider = new ethers.BrowserProvider(coinbaseProvider);
+
     //请求连接账户
     const accounts = await coinbaseProvider.request({
       method: "eth_requestAccounts",
     });
     //获取用户的钱包地址
-    const signer = await provider.getSigner();
+    const signer = await ethersProvider.getSigner();
     const address = await signer.getAddress();
 
-    const { chainId } = await provider.getNetwork();
+    const { chainId } = await ethersProvider.getNetwork();
 
     //监听账号连接变化
     coinbaseProvider?.on("accountsChanged", (accounts: string[]) => {
@@ -53,6 +56,16 @@ const connectCoinbaseWallet = async () => {
         })
       );
     });
+
+    // 创建一个包含request方法的provider对象
+    const provider = {
+      ...ethersProvider,
+      request: coinbaseProvider.request.bind(coinbaseProvider),
+      getBalance: ethersProvider.getBalance.bind(ethersProvider),
+      removeAllListeners: () => {
+        ethersProvider.removeAllListeners();
+      },
+    };
 
     return {
       provider,

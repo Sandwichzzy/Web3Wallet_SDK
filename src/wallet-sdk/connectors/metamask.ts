@@ -15,11 +15,13 @@ const connectorMetamask = async (): Promise<any> => {
     if (!accounts || accounts.length === 0) {
       throw new Error("No accounts found");
     }
-    const provider = new ethers.BrowserProvider(window.ethereum);
 
-    const { chainId } = await provider.getNetwork();
+    // 创建ethers provider用于余额等操作
+    const ethersProvider = new ethers.BrowserProvider(window.ethereum);
+    const { chainId } = await ethersProvider.getNetwork();
+
     //获取用户的钱包地址
-    const signer = await provider.getSigner();
+    const signer = await ethersProvider.getSigner();
     const address = await signer.getAddress();
 
     //监听账号连接变化
@@ -48,6 +50,16 @@ const connectorMetamask = async (): Promise<any> => {
         })
       );
     });
+
+    // 创建一个包含request方法的provider对象
+    const provider = {
+      ...ethersProvider,
+      request: window.ethereum.request.bind(window.ethereum),
+      getBalance: ethersProvider.getBalance.bind(ethersProvider),
+      removeAllListeners: () => {
+        window.ethereum.removeAllListeners();
+      },
+    };
 
     return { accounts, chainId, address, signer, provider };
   } catch (error) {

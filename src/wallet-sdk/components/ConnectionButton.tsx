@@ -92,6 +92,12 @@ const ConnectionButton = ({
     }
 
     try {
+      console.log("开始切换网络:", {
+        from: chainId,
+        to: targetChainId,
+        currentWallet: !!switchChain,
+      });
+
       setIsSwitchingNetwork(true);
       await switchChain(targetChainId.toString());
       if (onChainChange) {
@@ -99,7 +105,7 @@ const ConnectionButton = ({
       }
       setShowNetworkDropdown(false);
     } catch (error) {
-      console.error("Failed to switch network:", error);
+      console.error("网络切换失败:", error);
       alert(
         `网络切换失败: ${error instanceof Error ? error.message : "未知错误"}`
       );
@@ -226,6 +232,13 @@ const ConnectionButton = ({
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
             )}
           </button>
+
+          {/* 网络切换状态提示 */}
+          {isSwitchingNetwork && (
+            <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-blue-100 border border-blue-300 rounded-lg text-sm text-blue-700 whitespace-nowrap">
+              正在切换网络...
+            </div>
+          )}
 
           {/* 网络选择下拉菜单 */}
           {showNetworkDropdown && (

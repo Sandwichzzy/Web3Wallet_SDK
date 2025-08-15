@@ -13,7 +13,7 @@ const chains: Chain[] = [
   {
     id: 1,
     name: "Ethereum",
-    rpcUrl: "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID",
+    rpcUrl: "https://eth-mainnet.g.alchemy.com/v2/56HjACR3rieEsXnBAsET7",
     currency: {
       name: "Ether",
       symbol: "ETH",
@@ -26,11 +26,11 @@ const chains: Chain[] = [
   },
   {
     id: 11155111,
-    name: "SEPOLIA",
-    rpcUrl: "https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID",
+    name: "Sepolia",
+    rpcUrl: "https://eth-sepolia.g.alchemy.com/v2/56HjACR3rieEsXnBAsET7",
     currency: {
-      name: "Sepolia",
-      symbol: "SEP",
+      name: "Sepolia Ether",
+      symbol: "ETH",
       decimals: 18,
     },
     blockExplorer: {
@@ -41,7 +41,7 @@ const chains: Chain[] = [
   {
     id: 137,
     name: "Polygon",
-    rpcUrl: "https://polygon-rpc.com",
+    rpcUrl: "https://polygon-mainnet.g.alchemy.com/v2/56HjACR3rieEsXnBAsET7",
     currency: {
       name: "MATIC",
       symbol: "MATIC",
@@ -50,20 +50,6 @@ const chains: Chain[] = [
     blockExplorer: {
       name: "Polygonscan",
       url: "https://polygonscan.com",
-    },
-  },
-  {
-    id: 56,
-    name: "BSC",
-    rpcUrl: "https://bsc-dataseed.binance.org",
-    currency: {
-      name: "BNB",
-      symbol: "BNB",
-      decimals: 18,
-    },
-    blockExplorer: {
-      name: "BscScan",
-      url: "https://bscscan.com",
     },
   },
 ];
