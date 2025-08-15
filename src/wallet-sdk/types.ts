@@ -53,6 +53,6 @@ export type WalletProviderProps = {
   children: React.ReactNode;
   chains: Chain[];
   wallets: Wallet[];
-  provider: any;
+  provider?: any; // 设为可选，因为在实际实现中不需要
   autoConnect?: boolean;
 };

@@ -1,5 +1,4 @@
 import { WalletProvider, ConnectionButton } from "./wallet-sdk";
-import { ethers } from "ethers";
 import type { Chain, Wallet } from "./wallet-sdk/types";
 import { metamaskWallet } from "./wallet-sdk/connectors/metamask";
 import { coinbaseWallet } from "./wallet-sdk/connectors/coinbase";
@@ -39,27 +38,48 @@ const chains: Chain[] = [
       url: "https://sepolia.etherscan.io",
     },
   },
+  {
+    id: 137,
+    name: "Polygon",
+    rpcUrl: "https://polygon-rpc.com",
+    currency: {
+      name: "MATIC",
+      symbol: "MATIC",
+      decimals: 18,
+    },
+    blockExplorer: {
+      name: "Polygonscan",
+      url: "https://polygonscan.com",
+    },
+  },
+  {
+    id: 56,
+    name: "BSC",
+    rpcUrl: "https://bsc-dataseed.binance.org",
+    currency: {
+      name: "BNB",
+      symbol: "BNB",
+      decimals: 18,
+    },
+    blockExplorer: {
+      name: "BscScan",
+      url: "https://bscscan.com",
+    },
+  },
 ];
 
 const wallets: Wallet[] = [metamaskWallet, coinbaseWallet];
 
 function App() {
-  const provider = new ethers.BrowserProvider(window.ethereum);
   return (
-    <>
-      <WalletProvider
-        chains={chains}
-        provider={provider}
-        wallets={wallets}
-        autoConnect={true}
-      >
-        <h1 className="text-3xl h-10 w-20 font-bold bg-red-500">test</h1>
-        <ConnectionButton />
+    <div className="min-h-screen bg-gray-50 py-8">
+      <WalletProvider chains={chains} wallets={wallets} autoConnect={true}>
+        <div className="max-w-4xl mx-auto px-4">
+          <ConnectionButton />
+        </div>
       </WalletProvider>
-    </>
+    </div>
   );
 }
-
-//
 
 export default App;

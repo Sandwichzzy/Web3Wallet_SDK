@@ -41,7 +41,6 @@ const WalletContext = createContext<WalletContextValue>({
 export const WalletProvider: React.FC<WalletProviderProps> = ({
   children,
   chains,
-  provider,
   wallets,
   autoConnect,
 }) => {
@@ -207,6 +206,12 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
     };
   }, [state.provider, state.address, updateBalance]);
 
+  const walletsMap = useMemo(() => {
+    return detectedWallets.reduce((acc, wallet) => {
+      acc[wallet.id] = wallet;
+      return acc;
+    }, {} as Record<string, Wallet>);
+  }, [detectedWallets]);
   // 自动连接逻辑
   useEffect(() => {
     if (autoConnect) {
@@ -425,13 +430,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
       return "0";
     },
   };
-
-  const walletsMap = useMemo(() => {
-    return detectedWallets.reduce((acc, wallet) => {
-      acc[wallet.id] = wallet;
-      return acc;
-    }, {} as Record<string, Wallet>);
-  }, [detectedWallets]);
 
   return (
     <WalletContext.Provider value={value}>
