@@ -1,10 +1,12 @@
 import React from "react";
-import { useContext, createContext, useState, useEffect } from "react";
+import { useContext, createContext, useState, useEffect, useMemo } from "react";
 import type {
   WalletContextValue,
   WalletProviderProps,
   WalletState,
+  Wallet,
 } from "../types";
+import WalletModal from "../components/WalletModal";
 
 const WalletContext = createContext<WalletContextValue>({
   connect: async () => {},
@@ -26,6 +28,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
   children,
   chains,
   provider,
+  wallets,
   autoConnect,
 }) => {
   const [state, setState] = useState<WalletState>({
@@ -39,6 +42,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
     provider,
   });
 
+  const [modalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
     if (autoConnect) {
       // connect()
@@ -47,14 +52,68 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
 
   const value: WalletContextValue = {
     ...state,
-    connect: async () => {},
+    connect: async (walletID: string) => {
+      try {
+        const wallet = walletsMap[walletID];
+        if (!wallet) {
+          throw new Error("Wallet not found");
+        }
+        setState({
+          ...state,
+          isConnecting: true,
+        });
+        try {
+          const { chainId, address } = await wallet.connector();
+          setState({
+            ...state,
+            isConnected: true,
+            address,
+            chainId,
+          });
+        } catch (error) {
+          setState({
+            ...state,
+            isConnected: false,
+            error: error as Error,
+          });
+        }
+      } catch (error) {
+        setState({
+          ...state,
+          isConnected: false,
+          error: error as Error,
+        });
+      }
+    },
     disconnect: async () => {},
     switchChain: async () => {},
-    openModal: function (): void {},
-    closeModal: function (): void {},
+    openModal: function (): void {
+      setModalOpen(true);
+    },
+    closeModal: function (): void {
+      setModalOpen(false);
+    },
   };
+
+  const walletsMap = useMemo(() => {
+    return wallets.reduce((acc, wallet) => {
+      acc[wallet.id] = wallet;
+      return acc;
+    }, {} as Record<string, Wallet>);
+  }, [wallets]);
+
   return (
-    <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
+    <WalletContext.Provider value={value}>
+      {children}
+      <WalletModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        wallets={wallets}
+        onSelectWallet={(wallet) => value.connect(wallet.id)}
+        connecting={false}
+        error={null}
+      />
+    </WalletContext.Provider>
   );
 };
 

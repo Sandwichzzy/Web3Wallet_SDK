@@ -1,5 +1,8 @@
-import WalletProvider from "./wallet-sdk/provider";
+import { WalletProvider, ConnectionButton } from "./wallet-sdk";
 import { ethers } from "ethers";
+import type { Chain, Wallet } from "./wallet-sdk/types";
+import { metamaskWallet } from "./wallet-sdk/connectors/metamask";
+import { coinbaseWallet } from "./wallet-sdk/connectors/coinbase";
 
 declare global {
   interface Window {
@@ -7,7 +10,7 @@ declare global {
   }
 }
 
-const chains = [
+const chains: Chain[] = [
   {
     id: 1,
     name: "Ethereum",
@@ -38,14 +41,7 @@ const chains = [
   },
 ];
 
-const wallets = [
-  {
-    id: "metamask",
-    name: "MetaMask",
-    icon: "https://assets.coingecko.com/coins/images/13864/large/MetaMask_2019.png?1696501629",
-    connector: () => window.ethereum.request({ method: "eth_requestAccounts" }),
-  },
-];
+const wallets: Wallet[] = [metamaskWallet, coinbaseWallet];
 
 function App() {
   const provider = new ethers.BrowserProvider(window.ethereum);
@@ -58,6 +54,7 @@ function App() {
         autoConnect={true}
       >
         <h1 className="text-3xl h-10 w-20 font-bold bg-red-500">test</h1>
+        <ConnectionButton />
       </WalletProvider>
     </>
   );

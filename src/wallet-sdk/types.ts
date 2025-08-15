@@ -14,6 +14,7 @@ export type Chain = {
   };
 };
 
+//钱包状态
 export interface WalletState {
   address: string | null;
   chainId: number | null;
@@ -25,6 +26,7 @@ export interface WalletState {
   provider: any;
 }
 
+//钱包上下文值
 export interface WalletContextValue extends WalletState {
   connect: (walletID: string) => Promise<void>;
   disconnect: () => Promise<void>;
@@ -33,6 +35,7 @@ export interface WalletContextValue extends WalletState {
   closeModal: () => void;
 }
 
+//钱包配置
 export interface Wallet {
   id: string;
   name: string;
@@ -43,6 +46,7 @@ export interface Wallet {
   downloadLink?: string;
 }
 
+//钱包提供者配置
 export type WalletProviderProps = {
   children: React.ReactNode;
   chains: Chain[];
