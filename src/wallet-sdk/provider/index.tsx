@@ -1,24 +1,18 @@
 import React from "react";
-import {
-  useContext,
-  createContext,
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-} from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { ethers } from "ethers";
 import type {
-  WalletContextValue,
   WalletProviderProps,
   WalletState,
   Wallet,
+  WalletContextValue,
 } from "../types";
 import WalletModal from "../components/WalletModal";
 import {
   detectWalletInstallation,
   setupWalletInstallationListener,
 } from "../utils/walletDetection";
+import { WalletContext } from "./context";
 
 // 初始状态
 const initialState: WalletState = {
@@ -32,19 +26,6 @@ const initialState: WalletState = {
   provider: undefined,
   balance: "0",
 };
-
-// 初始上下文值
-const initialContextValue: WalletContextValue = {
-  ...initialState,
-  connect: async () => {},
-  disconnect: async () => {},
-  switchChain: async () => {},
-  openModal: () => {},
-  closeModal: () => {},
-  getBalance: async () => "0",
-};
-
-const WalletContext = createContext<WalletContextValue>(initialContextValue);
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({
   children,
@@ -238,7 +219,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
         connectWallet();
       }, 100);
     }
-  }, [autoConnect, wallets]);
+  }, [autoConnect, wallets, updateBalance]);
 
   // 网络切换逻辑
   const switchChain = useCallback(
@@ -295,69 +276,71 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
   );
 
   // 尝试网络切换或添加的辅助函数
-  const attemptNetworkSwitch = async (
-    provider: any,
-    chainParams: any,
-    chainId: string
-  ) => {
-    try {
-      // 首先尝试直接切换网络
-      console.log("尝试直接切换网络...");
-      await provider.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: `0x${parseInt(chainId).toString(16)}` }],
-      });
-      console.log("网络切换成功");
-      return;
-    } catch (switchError: any) {
-      console.log(
-        "直接切换失败，错误代码:",
-        switchError.code,
-        "错误信息:",
-        switchError.message
-      );
-
-      // 如果网络不存在，尝试添加网络
-      if (switchError.code === 4902) {
-        await addNetworkToWallet(provider, chainParams);
+  const attemptNetworkSwitch = useCallback(
+    async (provider: any, chainParams: any, chainId: string) => {
+      try {
+        // 首先尝试直接切换网络
+        console.log("尝试直接切换网络...");
+        await provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: `0x${parseInt(chainId).toString(16)}` }],
+        });
+        console.log("网络切换成功");
         return;
-      }
+      } catch (switchError: any) {
+        console.log(
+          "直接切换失败，错误代码:",
+          switchError.code,
+          "错误信息:",
+          switchError.message
+        );
 
-      // 其他错误直接抛出
-      throw switchError;
-    }
-  };
+        // 如果网络不存在，尝试添加网络
+        if (switchError.code === 4902) {
+          await addNetworkToWallet(provider, chainParams);
+          return;
+        }
+
+        // 其他错误直接抛出
+        throw switchError;
+      }
+    },
+    []
+  );
 
   // 添加网络到钱包的辅助函数
-  const addNetworkToWallet = async (provider: any, chainParams: any) => {
-    try {
-      console.log("网络不存在，尝试添加网络...");
-      await provider.request({
-        method: "wallet_addEthereumChain",
-        params: [chainParams],
-      });
-      console.log("网络添加成功");
-    } catch (addError: any) {
-      console.log(
-        "添加网络失败，错误代码:",
-        addError.code,
-        "错误信息:",
-        addError.message
-      );
-
-      // 参数错误时重试一次
-      if (addError.code === -32602) {
-        console.log("参数错误，重试添加网络...");
+  const addNetworkToWallet = useCallback(
+    async (provider: any, chainParams: any) => {
+      try {
+        console.log("网络不存在，尝试添加网络...");
         await provider.request({
           method: "wallet_addEthereumChain",
           params: [chainParams],
         });
-        console.log("重试添加网络成功");
-      } else {
-        throw addError;
+        console.log("网络添加成功");
+      } catch (addError: any) {
+        console.log(
+          "添加网络失败，错误代码:",
+          addError.code,
+          "错误信息:",
+          addError.message
+        );
+
+        // 参数错误时重试一次
+        if (addError.code === -32602) {
+          console.log("参数错误，重试添加网络...");
+          await provider.request({
+            method: "wallet_addEthereumChain",
+            params: [chainParams],
+          });
+          console.log("重试添加网络成功");
+        } else {
+          throw addError;
+        }
       }
-    }
-  };
+    },
+    []
+  );
 
   // 连接钱包
   const connect = useCallback(
@@ -457,14 +440,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({
       />
     </WalletContext.Provider>
   );
-};
-
-export const useWallet = () => {
-  const context = useContext(WalletContext);
-  if (!context) {
-    throw new Error("useWallet must be used within a WalletProvider");
-  }
-  return context;
 };
 
 export default WalletProvider;

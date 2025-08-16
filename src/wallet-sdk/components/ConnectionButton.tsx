@@ -1,4 +1,4 @@
-import { useWallet } from "../provider";
+import { useWallet } from "../provider/useWallet";
 import { useEffect, useState } from "react";
 import WalletDetailModal from "./WalletDetailModal";
 
@@ -10,7 +10,6 @@ interface ConnectionButtonProps {
   size?: "sm" | "md" | "lg";
   customClassName?: string;
   onConnect?: () => void;
-  onDisconnect?: () => void;
   onChainChange?: (chainId: number) => void;
   onBalanceChange?: (balance: string) => void;
 }
@@ -23,12 +22,10 @@ const ConnectionButton = ({
   size = "md",
   customClassName = "",
   onConnect,
-  onDisconnect,
   onChainChange,
   onBalanceChange,
 }: ConnectionButtonProps) => {
   const {
-    disconnect,
     isConnected,
     address,
     chainId,
@@ -159,18 +156,6 @@ const ConnectionButton = ({
       onBalanceChange(balance);
     }
   }, [balance, onBalanceChange]);
-
-  // 处理断开连接
-  const handleDisconnect = async () => {
-    try {
-      await disconnect();
-      if (onDisconnect) {
-        onDisconnect();
-      }
-    } catch (error) {
-      console.error("Failed to disconnect wallet", error);
-    }
-  };
 
   // 未连接状态 - 显示连接按钮
   if (!isConnected) {

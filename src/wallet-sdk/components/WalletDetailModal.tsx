@@ -1,4 +1,4 @@
-import { useWallet } from "../provider";
+import { useWallet } from "../provider/useWallet";
 import { useState } from "react";
 
 interface WalletDetailModalProps {
